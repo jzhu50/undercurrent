@@ -285,7 +285,7 @@ export default function RecordPage() {
       <div className="relative z-10 flex flex-col items-center gap-14">
         {/* Header */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
             {today}
           </p>
           <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
@@ -299,7 +299,7 @@ export default function RecordPage() {
           {/* Left column: video + button */}
           <div className="flex flex-col items-center gap-14">
           {/* Video area */}
-          <div className="relative w-[648px] h-[364px] rounded-xl overflow-hidden bg-zinc-100">
+          <div className="relative w-[648px] h-[364px] rounded-xl overflow-hidden bg-zinc-100 shadow-[0_4px_12px_rgba(0,0,0,0.15)]">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
 
               {/* Recording indicator */}
@@ -315,7 +315,7 @@ export default function RecordPage() {
             {stage === 'idle' && (
               <button
                 onClick={startRecording}
-                className="w-[360px] bg-white border border-[#63d7ba] rounded-full py-3.5 text-black text-[32px] shadow-[2px_2px_5px_rgba(99,215,186,0.5)] transition hover:shadow-[2px_2px_10px_rgba(99,215,186,0.7)]"
+                className="w-[360px] bg-white border border-[#63d7ba] rounded-full py-3 flex items-center justify-center text-black text-[20px] shadow-[2px_2px_5px_rgba(99,215,186,0.5)] transition hover:shadow-[2px_2px_10px_rgba(99,215,186,0.7)]"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 record
@@ -325,7 +325,7 @@ export default function RecordPage() {
             {stage === 'recording' && (
               <button
                 onClick={stopAndProcess}
-                className="w-[360px] bg-white border border-[#ff7480] rounded-full py-3.5 text-black text-[32px] shadow-[2px_2px_5px_rgba(255,116,128,0.25)] transition hover:shadow-[2px_2px_10px_rgba(255,116,128,0.4)]"
+                className="w-[360px] bg-white border border-[#ff7480] rounded-full py-3 flex items-center justify-center text-black text-[20px] shadow-[2px_2px_5px_rgba(255,116,128,0.25)] transition hover:shadow-[2px_2px_10px_rgba(255,116,128,0.4)]"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 stop
@@ -343,10 +343,10 @@ export default function RecordPage() {
             >
               {segments.map((seg, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <p className="text-black text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-black text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {seg.time}
                   </p>
-                  <p className="text-[#7f7f7f] text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-[#7f7f7f] text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {seg.text}
                   </p>
                 </div>
@@ -355,10 +355,10 @@ export default function RecordPage() {
               {/* Interim text (partial, still being spoken) */}
               {interimText && (
                 <div className="flex flex-col gap-1.5 opacity-50">
-                  <p className="text-black text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-black text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {formatElapsed(Date.now() - recStartRef.current)}
                   </p>
-                  <p className="text-[#7f7f7f] text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-[#7f7f7f] text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {interimText}
                   </p>
                 </div>
@@ -366,7 +366,7 @@ export default function RecordPage() {
 
               {/* Empty state before first words */}
               {segments.length === 0 && !interimText && (
-                <p className="text-zinc-300 text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                <p className="text-zinc-300 text-[14px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                   start speaking…
                 </p>
               )}

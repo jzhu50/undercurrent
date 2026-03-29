@@ -65,7 +65,7 @@ function EntryCard({ entry }: { entry: EntryData }) {
           {date}
         </p>
         {subtitle && (
-          <p className="text-[#7f7f7f] text-[16px] italic truncate" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[14px] italic truncate" style={{ fontFamily: '"DM Mono", monospace' }}>
             {subtitle}
           </p>
         )}

@@ -78,7 +78,7 @@ export default function SignUpPage() {
       <div className="relative z-10 flex flex-col items-center gap-16 w-[360px] px-4">
         {/* Title */}
         <div className="flex flex-col items-center">
-          <h1 style={{ fontFamily: '"EB Garamond", Garamond, serif', fontSize: 60, lineHeight: 1 }} className="text-black font-normal">
+          <h1 style={{ fontFamily: '"EB Garamond", Garamond, serif', fontSize: 48, lineHeight: 1 }} className="text-black font-normal">
             sign up
           </h1>
         </div>
@@ -90,7 +90,7 @@ export default function SignUpPage() {
               type="email"
               placeholder="EMAIL"
               required
-              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[14px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
               style={{ fontFamily: '"DM Mono", monospace' }}
             />
 
@@ -99,7 +99,7 @@ export default function SignUpPage() {
               type="password"
               placeholder="PASSWORD"
               required
-              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[14px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
               style={{ fontFamily: '"DM Mono", monospace' }}
             />
 
@@ -107,7 +107,7 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[27px] font-normal transition hover:shadow-md disabled:opacity-50"
+                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[18px] font-normal transition hover:shadow-md disabled:opacity-50"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 {loading ? 'signing up…' : 'sign up'}
@@ -144,7 +144,7 @@ export default function SignUpPage() {
 
               <div id="clerk-captcha" />
 
-              <div className="flex gap-4 items-center text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+              <div className="flex gap-4 items-center text-[14px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                 <span className="text-[#7f7f7f]">have an account?</span>
                 <a href="/sign-in" className="text-black underline">log in</a>
               </div>
@@ -160,7 +160,7 @@ export default function SignUpPage() {
               type="text"
               placeholder="VERIFICATION CODE"
               required
-              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[18px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
               style={{ fontFamily: '"DM Mono", monospace' }}
             />
             {errorMsg && (
@@ -170,7 +170,7 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[20px] font-normal transition hover:shadow-md disabled:opacity-50"
+                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[18px] font-normal transition hover:shadow-md disabled:opacity-50"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 {loading ? 'verifying…' : 'verify'}

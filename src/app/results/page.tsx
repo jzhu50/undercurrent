@@ -99,7 +99,7 @@ export default function ResultsPage() {
       <div className="relative z-10 flex flex-col items-center gap-16">
         {/* Header */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
             {today}
           </p>
           <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
@@ -114,7 +114,7 @@ export default function ResultsPage() {
         )}
         {isError && (
           <div className="w-60 h-60 rounded-full flex items-center justify-center bg-zinc-100">
-            <p className="text-zinc-400 text-sm text-center px-6" style={{ fontFamily: '"DM Mono", monospace' }}>
+            <p className="text-zinc-400 text-xs text-center px-6" style={{ fontFamily: '"DM Mono", monospace' }}>
               {result.error ?? 'something went wrong'}
             </p>
           </div>
@@ -132,7 +132,7 @@ export default function ResultsPage() {
           <button
             onClick={() => result.entryId ? router.push(`/entries/${result.entryId}`) : undefined}
             disabled={!result.entryId}
-            className="w-[360px] bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3.5 text-black text-[32px] shadow-[2px_2px_5px_rgba(0,0,0,0.25)] transition hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
+            className="w-[360px] bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center text-black text-[20px] shadow-[2px_2px_5px_rgba(0,0,0,0.25)] transition hover:shadow-md disabled:opacity-40 disabled:cursor-not-allowed"
             style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
           >
             {result.entryId ? 'view insights' : isProcessing ? 'saving…' : 'saving…'}
@@ -140,7 +140,7 @@ export default function ResultsPage() {
 
           <button
             onClick={() => router.push('/record')}
-            className="w-[360px] bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3.5 text-black text-[32px] shadow-[2px_2px_5px_rgba(0,0,0,0.25)] transition hover:shadow-md"
+            className="w-[360px] bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center text-black text-[20px] shadow-[2px_2px_5px_rgba(0,0,0,0.25)] transition hover:shadow-md"
             style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
           >
             record more

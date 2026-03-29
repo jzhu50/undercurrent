@@ -111,7 +111,7 @@ export default function ColorsPage() {
           <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
             my colors
           </p>
-          <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
             click a mood to edit its color
           </p>
         </div>

@@ -41,7 +41,7 @@ export default function NavBar({ activeOverride }: NavBarProps) {
           <Link
             key={href}
             href={href}
-            className={`flex items-center gap-3 text-[20px] whitespace-nowrap transition-colors ${active ? 'text-black' : 'text-[#7f7f7f] hover:text-zinc-500'}`}
+            className={`flex items-center gap-3 text-[18px] whitespace-nowrap transition-colors ${active ? 'text-black' : 'text-[#7f7f7f] hover:text-zinc-500'}`}
           >
             {active && <span className="w-2 h-2 rounded-full bg-black flex-shrink-0" />}
             {label}
@@ -51,7 +51,7 @@ export default function NavBar({ activeOverride }: NavBarProps) {
 
       <button
         onClick={handleSignOut}
-        className="text-left text-[20px] whitespace-nowrap text-[#ff7480] hover:text-[#ff5560] transition-colors"
+        className="text-left text-[18px] whitespace-nowrap text-[#ff7480] hover:text-[#ff5560] transition-colors"
       >
         logout
       </button>
