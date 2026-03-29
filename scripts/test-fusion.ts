@@ -41,37 +41,26 @@ const nZero = normalizeToHundred(rawZero)
 assert('all-zero returns 100 total', sum(nZero) === 100, `got ${sum(nZero)}`)
 assert('all-zero gives roughly equal shares', nZero.joy >= 16 && nZero.joy <= 17)
 
-// ── fuseEmotions with presage ─────────────────────────────────────────────────
+// ── fuseEmotions (3-signal) ───────────────────────────────────────────────────
 
-console.log('\nfuseEmotions() — with presage')
+console.log('\nfuseEmotions() — 3 signals')
 
 const joySignal    = { joy: 80, anger: 5,  fear: 5,  sadness: 5,  disgust: 3,  surprise: 2  }
 const neutralVoice = { joy: 20, anger: 20, fear: 20, sadness: 20, disgust: 10, surprise: 10 }
 const neutralFace  = { joy: 20, anger: 20, fear: 20, sadness: 20, disgust: 10, surprise: 10 }
-const neutralPres  = { joy: 20, anger: 20, fear: 20, sadness: 20, disgust: 10, surprise: 10 }
 
-const fused1 = fuseEmotions(joySignal, neutralVoice, neutralFace, neutralPres)
+const fused1 = fuseEmotions(joySignal, neutralVoice, neutralFace)
 assert('sums to 100', sum(fused1) === 100, `got ${sum(fused1)}`)
-assert('joy is dominant (Gemini 55% weight)', fused1.joy > fused1.anger)
+assert('joy is dominant (Gemini 61% weight)', fused1.joy > fused1.anger)
 assert('all values are numbers', Object.values(fused1).every(v => typeof v === 'number'))
 assert('no negatives', Object.values(fused1).every(v => v >= 0))
-
-// ── fuseEmotions without presage ──────────────────────────────────────────────
-
-console.log('\nfuseEmotions() — without presage (null)')
-
-const fused2 = fuseEmotions(joySignal, neutralVoice, neutralFace, null)
-assert('sums to 100 without presage', sum(fused2) === 100, `got ${sum(fused2)}`)
-assert('joy still dominant', fused2.joy > fused2.anger)
-// Joy should be higher when presage (neutral) is removed — Gemini weight goes from 55% → 61%
-assert('joy higher without neutral presage signal', fused2.joy >= fused1.joy)
 
 // ── detectContradiction — no contradiction ────────────────────────────────────
 
 console.log('\ndetectContradiction() — no contradiction')
 
 const joyDominant  = { joy: 70, anger: 5, fear: 5, sadness: 10, disgust: 5, surprise: 5 }
-const noContradict = detectContradiction(joyDominant, joyDominant, joyDominant, null)
+const noContradict = detectContradiction(joyDominant, joyDominant, joyDominant)
 assert('detected is false when all signals agree', !noContradict.detected)
 assert('message is empty string', noContradict.message === '')
 
@@ -79,9 +68,9 @@ assert('message is empty string', noContradict.message === '')
 
 console.log('\ndetectContradiction() — contradiction detected')
 
-const sadSignal     = { joy: 5,  anger: 5,  fear: 5,  sadness: 70, disgust: 10, surprise: 5 }
-const angrySignal   = { joy: 5,  anger: 70, fear: 5,  sadness: 5,  disgust: 10, surprise: 5 }
-const contradict    = detectContradiction(joyDominant, sadSignal, angrySignal, null)
+const sadSignal   = { joy: 5,  anger: 5,  fear: 5,  sadness: 70, disgust: 10, surprise: 5 }
+const angrySignal = { joy: 5,  anger: 70, fear: 5,  sadness: 5,  disgust: 10, surprise: 5 }
+const contradict  = detectContradiction(joyDominant, sadSignal, angrySignal)
 assert('detected is true when signals disagree', contradict.detected)
 assert('message is non-empty', contradict.message.length > 0)
 assert('message mentions words/voice/face',
@@ -89,9 +78,7 @@ assert('message mentions words/voice/face',
   contradict.message.includes('voice') &&
   contradict.message.includes('face')
 )
-assert('message format correct (ends with period)',
-  contradict.message.trim().endsWith('.')
-)
+assert('message ends with period', contradict.message.trim().endsWith('.'))
 
 // Print a sample message so it can be reviewed visually
 console.log(`\n  Sample contradiction message:\n  "${contradict.message}"`)
@@ -103,7 +90,7 @@ console.log('\nPrecision')
 for (let i = 0; i < 20; i++) {
   const r = () => Math.floor(Math.random() * 100)
   const rand = { joy: r(), anger: r(), fear: r(), sadness: r(), disgust: r(), surprise: r() }
-  const result = fuseEmotions(rand, rand, rand, rand)
+  const result = fuseEmotions(rand, rand, rand)
   if (sum(result) !== 100) {
     assert(`random trial ${i} sums to 100`, false, `got ${sum(result)}`)
   }
