@@ -7,6 +7,7 @@
 export interface RecordingResult {
   status: 'processing' | 'done' | 'error'
   gradientColors?: string[]
+  gradientStops?: number[]
   emotionBeneath?: string
   contradictionDetected?: boolean
   contradictionMessage?: string

@@ -4,6 +4,8 @@ import '@fontsource/eb-garamond'
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import NavBar from '@/components/NavBar'
+import { computeGradientColors, loadEmotionColors, EMOTION_DEFAULTS } from '@/lib/gradients'
+import type { FusedEmotions } from '@/lib/models/Entry'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -76,22 +78,6 @@ function TranscriptCard({ transcript }: { transcript?: string }) {
   )
 }
 
-// ── Emotion color helpers ─────────────────────────────────────────────────────
-
-const EMOTION_DEFAULTS: Record<string, string> = {
-  joy:      '#fde2e4',
-  sadness:  '#e2ece9',
-  anger:    '#dbcfbd',
-  surprise: '#fefae0',
-  disgust:  '#efcfe3',
-  fear:     '#add8e6',
-}
-
-function loadEmotionColors(): Record<string, string> {
-  if (typeof window === 'undefined') return {}
-  try { return JSON.parse(localStorage.getItem('undercurrent_emotion_colors') ?? '{}') } catch { return {} }
-}
-
 // ── Signal source helper ──────────────────────────────────────────────────────
 
 function topEmotion(emotions?: Record<string, number>): string | null {
@@ -116,7 +102,6 @@ function InsightsCard({
   const topKey = fusedEmotions
     ? Object.entries(fusedEmotions).sort(([, a], [, b]) => b - a)[0]?.[0]
     : undefined
-  const accentColor = topKey ? (saved[topKey] ?? EMOTION_DEFAULTS[topKey] ?? '#a8abfc') : '#a8abfc'
 
   return (
     <div
@@ -189,9 +174,12 @@ function InsightsCard({
 export default function EntryInsightsPage() {
   const router = useRouter()
   const { id } = useParams<{ id: string }>()
-  const [entry, setEntry]     = useState<EntryData | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState<string | null>(null)
+  const [entry, setEntry]         = useState<EntryData | null>(null)
+  const [loading, setLoading]     = useState(true)
+  const [error, setError]         = useState<string | null>(null)
+  const [userColors, setUserColors] = useState<Record<string, string>>({})
+
+  useEffect(() => { setUserColors(loadEmotionColors()) }, [])
 
   useEffect(() => {
     if (!id) return
@@ -271,10 +259,13 @@ export default function EntryInsightsPage() {
                 </div>
               </div>
 
-              {/* Gradient circle */}
-              {entry.gradientColors && entry.gradientColors.length > 0 && (
-                <GradientCircle colors={entry.gradientColors} />
-              )}
+              {/* Gradient circle — computed from fusedEmotions using user's custom colors */}
+              {(entry.fusedEmotions || entry.gradientColors) && (() => {
+                const colors = entry.fusedEmotions
+                  ? computeGradientColors(entry.fusedEmotions as unknown as FusedEmotions, userColors)
+                  : entry.gradientColors!
+                return <GradientCircle colors={colors} />
+              })()}
             </div>
 
             {/* Cards row */}

@@ -1,10 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose'
 
-export interface EmotionScore {
-  label: string
-  score: number
-}
-
 export interface FusedEmotions {
   joy: number
   anger: number
@@ -16,11 +11,7 @@ export interface FusedEmotions {
 
 export interface IEntry extends Document {
   userId: string             // Clerk user ID
-  audioUrl?: string          // ElevenLabs / stored recording URL
-  transcript?: string        // Whisper / transcription output
-  // Raw signal data
-  emotions?: EmotionScore[]  // Hume Expression API results
-  geminiInsight?: string     // Gemini analysis text
+  transcript?: string        // Transcription output
   // Per-signal emotion breakdowns (each mirrors FusedEmotions shape, 0–100)
   geminiEmotions?: FusedEmotions
   humeVoiceEmotions?: FusedEmotions
@@ -38,14 +29,6 @@ export interface IEntry extends Document {
   updatedAt: Date
 }
 
-const EmotionScoreSchema = new Schema<EmotionScore>(
-  {
-    label: { type: String, required: true },
-    score: { type: Number, required: true },
-  },
-  { _id: false }
-)
-
 const FusedEmotionsSchema = new Schema<FusedEmotions>(
   {
     joy:      { type: Number, required: true },
@@ -61,11 +44,7 @@ const FusedEmotionsSchema = new Schema<FusedEmotions>(
 const EntrySchema = new Schema<IEntry>(
   {
     userId: { type: String, required: true, index: true },
-    audioUrl: { type: String },
     transcript: { type: String },
-    // Raw signal data
-    emotions: { type: [EmotionScoreSchema], default: [] },
-    geminiInsight: { type: String },
     geminiEmotions:    { type: FusedEmotionsSchema },
     humeVoiceEmotions: { type: FusedEmotionsSchema },
     humeFaceEmotions:  { type: FusedEmotionsSchema },

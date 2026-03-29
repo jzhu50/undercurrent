@@ -5,7 +5,7 @@ import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NavBar from '@/components/NavBar'
 import { startRecordingSession, setRecordingResult } from '@/lib/recordingStore'
-import { computeGradientColors } from '@/lib/gradients'
+import { computeGradientColors, computeGradientStops, loadEmotionColors } from '@/lib/gradients'
 import type { FusedEmotions } from '@/lib/models/Entry'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -218,35 +218,27 @@ export default function RecordPage() {
       const aRes = await fetch('/api/analyze', { method: 'POST', body: afd })
       const analyzed = await aRes.json() as AnalyzeResult
 
-      // Compute gradient colors from fused emotions
-      const gradientColors = analyzed.fusedEmotions
-        ? computeGradientColors(analyzed.fusedEmotions as unknown as FusedEmotions)
-        : []
+      // Compute gradient colors + proportional stops from fused emotions
+      const fused = analyzed.fusedEmotions as unknown as FusedEmotions | undefined
+      const gradientColors = fused ? computeGradientColors(fused, loadEmotionColors()) : []
+      const gradientStops  = fused ? computeGradientStops(fused) : undefined
 
       // Push results to the store so the results page can render them
       setRecordingResult({
         status: 'done',
         gradientColors,
+        gradientStops,
         emotionBeneath:        analyzed.emotionBeneath,
         contradictionDetected: analyzed.contradictionDetected,
         contradictionMessage:  analyzed.contradictionMessage,
       }, sessionId)
 
-      // 3. Upload video + save entry; capture entryId once persisted
-      const uploadUrl = await fetch('/api/upload', {
-        method: 'POST',
-        body: (() => { const f = new FormData(); f.append('audio', videoBlob, 'recording.webm'); return f })(),
-      })
-        .then((r) => r.json())
-        .then(({ url }: { url?: string }) => url)
-        .catch(() => undefined)
-
+      // 3. Save entry; capture entryId once persisted
       const saved = await fetch('/api/entries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           transcript,
-          audioUrl: uploadUrl,
           fusedEmotions:         analyzed.fusedEmotions,
           geminiEmotions:        analyzed.geminiEmotions,
           humeVoiceEmotions:     analyzed.humeVoiceEmotions,

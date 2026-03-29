@@ -70,10 +70,7 @@ export async function POST(request: NextRequest) {
   await connectToDatabase()
 
   const {
-    audioUrl,
     transcript,
-    emotions,
-    geminiInsight,
     fusedEmotions,
     geminiEmotions,
     humeVoiceEmotions,
@@ -134,9 +131,6 @@ export async function POST(request: NextRequest) {
 
   const update = {
     ...(mergedTranscript                           && { transcript: mergedTranscript }),
-    ...(typeof audioUrl              === 'string'  && { audioUrl }),
-    ...(Array.isArray(emotions)                    && { emotions }),
-    ...(typeof geminiInsight         === 'string'  && { geminiInsight }),
     ...(newFused                                   && { latestEmotions: newFused }),
     ...(mergedFused                                && { fusedEmotions: mergedFused }),
     ...(isFusedEmotions(geminiEmotions)            && { geminiEmotions }),

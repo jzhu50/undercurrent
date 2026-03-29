@@ -44,10 +44,11 @@ function NavBar() {
 
 // ── Gradient circle ───────────────────────────────────────────────────────────
 
-function GradientCircle({ colors }: { colors: string[] }) {
+function GradientCircle({ colors, stops }: { colors: string[]; stops?: number[] }) {
   const [c1, c2, c3] = colors
+  const [s1, s2, s3] = stops ?? [0, 50, 100]
   const bg = c2
-    ? `linear-gradient(to bottom, ${c1} 0%, ${c2} 50%, ${c3 ?? c2} 100%)`
+    ? `linear-gradient(to bottom, ${c1} ${s1}%, ${c2} ${s2}%, ${c3 ?? c2} ${s3 ?? 100}%)`
     : c1 ?? '#e0e0e0'
   return (
     <div
@@ -110,7 +111,7 @@ export default function ResultsPage() {
         {/* Gradient circle */}
         {isProcessing && <LoadingCircle />}
         {!isProcessing && !isError && result.gradientColors && (
-          <GradientCircle colors={result.gradientColors} />
+          <GradientCircle colors={result.gradientColors} stops={result.gradientStops} />
         )}
         {isError && (
           <div className="w-60 h-60 rounded-full flex items-center justify-center bg-zinc-100">

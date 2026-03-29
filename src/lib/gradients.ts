@@ -1,17 +1,25 @@
 import type { FusedEmotions } from '@/lib/models/Entry'
 
-/**
- * Each of the 6 emotions maps to a base hue (HSL).
- * Colors are blended proportionally by emotion weight,
- * then converted to hex.
- */
+// ── Default palette (matches colors/page.tsx MOODS defaults) ─────────────────
+
+export const EMOTION_DEFAULTS: Record<string, string> = {
+  joy:      '#fde2e4',
+  sadness:  '#e2ece9',
+  anger:    '#dbcfbd',
+  surprise: '#fefae0',
+  disgust:  '#efcfe3',
+  fear:     '#add8e6',
+}
+
+// ── HSL fallback (used only server-side / when no user colors are set) ────────
+
 const EMOTION_HUES: Record<keyof FusedEmotions, number> = {
-  joy:      48,   // warm yellow
-  anger:    0,    // red
-  fear:     270,  // violet
-  sadness:  220,  // blue
-  disgust:  140,  // green
-  surprise: 30,   // orange
+  joy:      48,
+  anger:    0,
+  fear:     270,
+  sadness:  220,
+  disgust:  140,
+  surprise: 30,
 }
 
 function hslToHex(h: number, s: number, l: number): string {
@@ -25,22 +33,65 @@ function hslToHex(h: number, s: number, l: number): string {
   return `#${f(0)}${f(8)}${f(4)}`
 }
 
+// ── Shared localStorage helper (client-only) ──────────────────────────────────
+
+export function loadEmotionColors(): Record<string, string> {
+  if (typeof window === 'undefined') return {}
+  try {
+    return JSON.parse(localStorage.getItem('undercurrent_emotion_colors') ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
+// ── Gradient stop positions ───────────────────────────────────────────────────
+
 /**
- * Takes a FusedEmotions object and returns an array of 3 hex color strings
- * suitable for a CSS gradient. Colors are derived from the top 3 emotions
- * by weight, blended toward pastel for readability.
+ * Returns the CSS gradient stop positions (0–100) for the top 3 emotions,
+ * proportional to their scores. e.g. [0, 60, 85] for scores [60, 25, 15].
  */
-export function computeGradientColors(emotions: FusedEmotions): string[] {
+export function computeGradientStops(emotions: FusedEmotions): number[] {
   const sorted = (Object.keys(emotions) as Array<keyof FusedEmotions>)
     .map((key) => ({ key, score: emotions[key] }))
     .sort((a, b) => b.score - a.score)
 
-  // Take top 3 (or fewer if scores are degenerate)
+  const top   = sorted.slice(0, 3)
+  const total = top.reduce((s, t) => s + t.score, 0) || 1
+
+  let cumulative = 0
+  return top.map(({ score }) => {
+    const stop = Math.round((cumulative / total) * 100)
+    cumulative += score
+    return stop
+  })
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
+
+/**
+ * Returns an array of 3 hex color strings for a CSS gradient.
+ *
+ * When `userColors` is provided (from localStorage), the user's chosen color
+ * for each emotion is used directly. Otherwise falls back to HSL-derived pastels.
+ *
+ * Pass `userColors` on the client; omit on the server.
+ */
+export function computeGradientColors(
+  emotions: FusedEmotions,
+  userColors?: Record<string, string>,
+): string[] {
+  const sorted = (Object.keys(emotions) as Array<keyof FusedEmotions>)
+    .map((key) => ({ key, score: emotions[key] }))
+    .sort((a, b) => b.score - a.score)
+
   const top = sorted.slice(0, 3)
 
   return top.map(({ key, score }) => {
-    const hue = EMOTION_HUES[key]
-    // Map score 0–100 → saturation 50–75%, lightness 72–80%
+    // Prefer user color, then EMOTION_DEFAULTS, then computed HSL
+    const custom = userColors?.[key] ?? (userColors ? EMOTION_DEFAULTS[key] : undefined)
+    if (custom) return custom
+
+    const hue        = EMOTION_HUES[key]
     const saturation = 50 + (score / 100) * 25
     const lightness  = 80 - (score / 100) * 8
     return hslToHex(hue, saturation, lightness)
