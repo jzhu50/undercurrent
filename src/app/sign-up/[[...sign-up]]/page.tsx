@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 
 const FRIENDLY: Record<string, string> = {
   form_identifier_exists:      'An account with this email already exists. Try logging in.',
-  form_password_pwned:         'This password has appeared in a data breach. Please choose a different one.',
   form_password_length_too_short: 'Password must be at least 8 characters.',
   too_many_requests:           'Too many attempts. Please wait a moment and try again.',
 }
@@ -42,9 +41,11 @@ export default function SignUpPage() {
     const password = formData.get('password') as string
     const { error } = await signUp.password({ emailAddress, password })
     if (error) {
-      const codes = (error as unknown as { errors?: { code?: string }[] })?.errors?.map(e => e.code ?? '') ?? []
-      const msg = codes.map(c => FRIENDLY[c]).find(Boolean) ?? 'Something went wrong. Please try again.'
-      setErrorMsg(msg)
+      const codes = (error as unknown as { errors?: { code?: string }[] })?.errors?.map(e => e.code ?? '').filter(c => c !== 'form_password_pwned') ?? []
+      if (codes.length > 0) {
+        const msg = codes.map(c => FRIENDLY[c]).find(Boolean) ?? 'Something went wrong. Please try again.'
+        setErrorMsg(msg)
+      }
       return
     }
     if (signUp.status === 'complete') {
@@ -82,12 +83,6 @@ export default function SignUpPage() {
           </h1>
         </div>
 
-        {errorMsg && (
-          <p className="text-[#ff7480] text-[14px] text-center" style={{ fontFamily: '"DM Mono", monospace' }}>
-            {errorMsg}
-          </p>
-        )}
-
         {!isVerifying ? (
           <form onSubmit={(e) => { e.preventDefault(); handleSignUp(new FormData(e.currentTarget)) }} className="flex flex-col gap-10 w-full">
             <input
@@ -108,7 +103,7 @@ export default function SignUpPage() {
               style={{ fontFamily: '"DM Mono", monospace' }}
             />
 
-            <div className="flex flex-col gap-5 items-center">
+            <div className="flex flex-col gap-3 items-center">
               <button
                 type="submit"
                 disabled={loading}
@@ -117,6 +112,12 @@ export default function SignUpPage() {
               >
                 {loading ? 'signing up…' : 'sign up'}
               </button>
+
+              {errorMsg && (
+                <p className="text-[#ff7480] text-[14px] text-center" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  {errorMsg}
+                </p>
+              )}
 
               {/* Divider */}
               <div className="flex items-center gap-3 w-full">
