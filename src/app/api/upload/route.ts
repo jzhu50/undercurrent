@@ -1,16 +1,11 @@
 import { auth } from '@clerk/nextjs/server'
-import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js'
+import { put } from '@vercel/blob'
 import type { NextRequest } from 'next/server'
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth()
   if (!userId) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const apiKey = process.env.ELEVENLABS_API_KEY
-  if (!apiKey) {
-    return Response.json({ error: 'Missing env: ELEVENLABS_API_KEY' }, { status: 500 })
   }
 
   let formData: FormData
@@ -25,15 +20,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'Missing required field: audio (blob)' }, { status: 400 })
   }
 
-  const client = new ElevenLabsClient({ apiKey })
+  const ext = audio.type.includes('mp4') ? 'mp4' : 'webm'
+  const filename = `recordings/${userId}/${Date.now()}.${ext}`
 
-  const result = await client.speechToText.convert({
-    file: audio,
-    modelId: 'scribe_v2',
-    tagAudioEvents: false,
-    languageCode: 'eng',
-    diarize: false,
+  const blob = await put(filename, audio, {
+    access: 'public',
+    contentType: audio.type || 'audio/webm',
   })
 
-  return Response.json({ transcript: result.text })
+  return Response.json({ url: blob.url }, { status: 201 })
 }
