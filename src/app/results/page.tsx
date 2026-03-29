@@ -3,44 +3,12 @@
 import '@fontsource/eb-garamond'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import NavBar from '@/components/NavBar'
 import {
   getRecordingResult,
   subscribeRecordingResult,
   type RecordingResult,
 } from '@/lib/recordingStore'
-
-// ── Nav ───────────────────────────────────────────────────────────────────────
-
-function NavBar() {
-  const pathname = usePathname()
-  const links = [
-    { href: '/record',  label: 'record' },
-    { href: '/entries', label: 'history' },
-    { href: '/colors',  label: 'colors' },
-  ]
-  return (
-    <nav
-      className="fixed left-7 top-1/2 -translate-y-1/2 flex flex-col gap-12 px-4 py-12 rounded-full overflow-hidden"
-      style={{ fontFamily: '"DM Mono", monospace' }}
-    >
-      {links.map(({ href, label }) => {
-        const active = pathname === '/results' ? href === '/record' : pathname === href
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={`flex items-center gap-3 text-[20px] whitespace-nowrap transition-colors ${active ? 'text-black' : 'text-[#7f7f7f] hover:text-zinc-500'}`}
-          >
-            {active && <span className="w-2 h-2 rounded-full bg-black flex-shrink-0" />}
-            {label}
-          </Link>
-        )
-      })}
-    </nav>
-  )
-}
 
 // ── Gradient circle ───────────────────────────────────────────────────────────
 
@@ -95,7 +63,7 @@ export default function ResultsPage() {
       style={{ backgroundImage: 'url(/paper-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
     >
       <div className="absolute inset-0 bg-white/75" />
-      <NavBar />
+      <NavBar activeOverride="record" />
 
       <div className="relative z-10 flex flex-col items-center gap-16">
         {/* Header */}

@@ -67,7 +67,7 @@ function EntryCard({ entry, userColors }: { entry: EntryData; userColors: Record
         )}
       </div>
 
-      <div className="flex flex-col gap-3.5 min-w-0">
+      <div className="flex flex-col gap-1 min-w-0">
         <p className="text-black text-[32px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {date}
         </p>
@@ -228,12 +228,12 @@ function MonthlyInsight({ year, month, entryCount }: { year: number; month: numb
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+      <p className="text-[#7f7f7f] text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
         SUMMARY
       </p>
 
       {entryCount === 0 ? (
-        <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+        <p className="text-zinc-300 text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
           no entries this month
         </p>
       ) : loading ? (
@@ -244,7 +244,7 @@ function MonthlyInsight({ year, month, entryCount }: { year: number; month: numb
           </p>
         </div>
       ) : insight ? (
-        <p className="text-black text-[26px] leading-[38px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+        <p className="text-black text-[22px] leading-[28px] lowercase" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {insight}
         </p>
       ) : null}
@@ -312,7 +312,7 @@ export default function HistoryPage() {
           <div className="flex gap-15 items-start">
             {/* Left column — recents */}
             <div className="flex flex-col gap-6 w-[496px] flex-shrink-0">
-              <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+              <p className="text-[#7f7f7f] text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                 RECENTS
               </p>
 

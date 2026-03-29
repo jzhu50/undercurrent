@@ -48,7 +48,7 @@ function TranscriptCard({ transcript }: { transcript?: string }) {
   if (!transcript) {
     return (
       <div className="flex-1 bg-white border border-[rgba(127,127,127,0.5)] rounded-3xl shadow-[2px_2px_5px_rgba(0,0,0,0.25)] px-7 py-12 overflow-y-auto" style={{ height: 526 }}>
-        <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+        <p className="text-zinc-300 text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
           no transcript available
         </p>
       </div>
@@ -70,10 +70,10 @@ function TranscriptCard({ transcript }: { transcript?: string }) {
     >
       {segments.map((seg, i) => (
         <div key={i} className="flex flex-col gap-1.5">
-          <p className="text-black text-[18px]">
+          <p className="text-black text-[16px]">
             {`${Math.floor((i * segmentSize) / 150)}:${String(Math.round(((i * segmentSize) % 150) * 0.4)).padStart(2, '0')}`}
           </p>
-          <p className="text-[#7f7f7f] text-[18px] italic">{seg}</p>
+          <p className="text-[#7f7f7f] text-[16px] italic">{seg}</p>
         </div>
       ))}
     </div>
@@ -111,18 +111,12 @@ function InsightsCard({
       style={{ height: 526 }}
     >
       {emotionBeneath ? (
-        <p className="text-black text-[28px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+        <p className="text-black text-[24px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {emotionBeneath}
         </p>
       ) : (
-        <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+        <p className="text-zinc-300 text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
           no insights available
-        </p>
-      )}
-
-      {contradictionDetected && contradictionMessage && (
-        <p className="text-black text-[28px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
-          {contradictionMessage}
         </p>
       )}
 
@@ -254,7 +248,7 @@ export default function EntryInsightsPage() {
                     {today}
                   </p>
                   {subtitle && (
-                    <p className="text-[#7f7f7f] text-[20px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                    <p className="text-[#7f7f7f] text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                       {subtitle}
                     </p>
                   )}
