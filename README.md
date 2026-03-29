@@ -95,10 +95,6 @@ ELEVENLABS_API_KEY=
 
 # Vercel Blob
 BLOB_READ_WRITE_TOKEN=
-
-# Presage (optional)
-PRESAGE_API_URL=
-PRESAGE_API_KEY=
 ```
 
 ### 3. Run locally
