@@ -301,6 +301,9 @@ export async function POST(request: NextRequest) {
 
   return Response.json({
     fusedEmotions,
+    geminiEmotions:    gemini,
+    humeVoiceEmotions: humeVoice,
+    humeFaceEmotions:  humeFaceRaw ?? null,
     contradictionDetected: detected,
     contradictionMessage: message,
     emotionBeneath,

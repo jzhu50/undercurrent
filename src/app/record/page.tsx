@@ -16,6 +16,9 @@ interface TranscriptSegment { time: string; text: string }
 
 interface AnalyzeResult {
   fusedEmotions: Record<string, number>
+  geminiEmotions?: Record<string, number>
+  humeVoiceEmotions?: Record<string, number>
+  humeFaceEmotions?: Record<string, number> | null
   contradictionDetected: boolean
   contradictionMessage: string
   emotionBeneath: string
@@ -237,6 +240,9 @@ export default function RecordPage() {
           transcript,
           audioUrl: uploadUrl,
           fusedEmotions:         analyzed.fusedEmotions,
+          geminiEmotions:        analyzed.geminiEmotions,
+          humeVoiceEmotions:     analyzed.humeVoiceEmotions,
+          humeFaceEmotions:      analyzed.humeFaceEmotions ?? undefined,
           contradictionDetected: analyzed.contradictionDetected,
           contradictionMessage:  analyzed.contradictionMessage,
           emotionBeneath:        analyzed.emotionBeneath,

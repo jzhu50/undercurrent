@@ -22,6 +22,10 @@ export interface IEntry extends Document {
   emotions?: EmotionScore[]  // Hume Expression API results
   geminiInsight?: string     // Gemini analysis text
   presageScore?: number      // Presage wellness metric
+  // Per-signal emotion breakdowns (each mirrors FusedEmotions shape, 0–100)
+  geminiEmotions?: FusedEmotions
+  humeVoiceEmotions?: FusedEmotions
+  humeFaceEmotions?: FusedEmotions
   // Processed outputs
   fusedEmotions?: FusedEmotions          // Weighted blend of all signals (0–100 per dimension)
   contradictionDetected?: boolean        // True when signals disagreed past threshold
@@ -63,6 +67,9 @@ const EntrySchema = new Schema<IEntry>(
     emotions: { type: [EmotionScoreSchema], default: [] },
     geminiInsight: { type: String },
     presageScore: { type: Number },
+    geminiEmotions:    { type: FusedEmotionsSchema },
+    humeVoiceEmotions: { type: FusedEmotionsSchema },
+    humeFaceEmotions:  { type: FusedEmotionsSchema },
     // Processed outputs
     fusedEmotions: { type: FusedEmotionsSchema },
     contradictionDetected: { type: Boolean },

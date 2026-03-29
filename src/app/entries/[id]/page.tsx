@@ -16,6 +16,9 @@ interface EntryData {
   contradictionMessage?: string
   gradientColors?: string[]
   fusedEmotions?: Record<string, number>
+  geminiEmotions?: Record<string, number>
+  humeVoiceEmotions?: Record<string, number>
+  humeFaceEmotions?: Record<string, number>
   keywords?: string[]
 }
 
@@ -88,6 +91,14 @@ function loadEmotionColors(): Record<string, string> {
   try { return JSON.parse(localStorage.getItem('undercurrent_emotion_colors') ?? '{}') } catch { return {} }
 }
 
+// ── Signal source helper ──────────────────────────────────────────────────────
+
+function topEmotion(emotions?: Record<string, number>): string | null {
+  if (!emotions) return null
+  const sorted = Object.entries(emotions).sort(([, a], [, b]) => b - a)
+  return sorted[0]?.[0] ?? null
+}
+
 // ── Insights card ─────────────────────────────────────────────────────────────
 
 function InsightsCard({
@@ -95,7 +106,10 @@ function InsightsCard({
   contradictionDetected,
   contradictionMessage,
   fusedEmotions,
-}: Pick<EntryData, 'emotionBeneath' | 'contradictionDetected' | 'contradictionMessage' | 'fusedEmotions'>) {
+  geminiEmotions,
+  humeVoiceEmotions,
+  humeFaceEmotions,
+}: Pick<EntryData, 'emotionBeneath' | 'contradictionDetected' | 'contradictionMessage' | 'fusedEmotions' | 'geminiEmotions' | 'humeVoiceEmotions' | 'humeFaceEmotions'>) {
   const saved = loadEmotionColors()
   const topKey = fusedEmotions
     ? Object.entries(fusedEmotions).sort(([, a], [, b]) => b - a)[0]?.[0]
@@ -121,6 +135,28 @@ function InsightsCard({
         <p className="text-black text-[28px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {contradictionMessage}
         </p>
+      )}
+
+      {/* Per-signal breakdown */}
+      {(geminiEmotions || humeVoiceEmotions || humeFaceEmotions) && (
+        <div className="flex flex-col gap-2" style={{ fontFamily: '"DM Mono", monospace' }}>
+          {[
+            { label: 'your words said', emotions: geminiEmotions },
+            { label: 'your voice said', emotions: humeVoiceEmotions },
+            { label: 'your face said',  emotions: humeFaceEmotions },
+          ].map(({ label, emotions }) => {
+            const top = topEmotion(emotions)
+            if (!top) return null
+            const color = saved[top] ?? EMOTION_DEFAULTS[top] ?? '#a8abfc'
+            return (
+              <div key={label} className="flex items-center gap-3 text-[16px]">
+                <span className="text-[#7f7f7f] whitespace-nowrap">{label}:</span>
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: color }} />
+                <span className="text-black">{top}</span>
+              </div>
+            )
+          })}
+        </div>
       )}
 
       {fusedEmotions && (
@@ -247,6 +283,9 @@ export default function EntryInsightsPage() {
                 contradictionDetected={entry.contradictionDetected}
                 contradictionMessage={entry.contradictionMessage}
                 fusedEmotions={entry.fusedEmotions}
+                geminiEmotions={entry.geminiEmotions}
+                humeVoiceEmotions={entry.humeVoiceEmotions}
+                humeFaceEmotions={entry.humeFaceEmotions}
               />
             </div>
           </>
