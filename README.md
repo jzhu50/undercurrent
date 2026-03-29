@@ -11,7 +11,6 @@ Undercurrent is an emotional journaling web app that captures video recordings a
    - **Gemini** reads the transcript for semantic emotion content
    - **Hume Voice** reads prosody and tone from the audio
    - **Hume Face** reads facial expressions from a captured frame
-   - **Presage** (optional) provides an additional voice signal
 3. **Fuse** — signals are weighted and blended into a single emotion profile
 4. **Surface** — a gradient visualization, a "emotion beneath" insight, and a contradiction alert (when your words say one thing and your voice says another) are shown on the results page
 5. **Persist** — entries are saved to MongoDB with the full signal breakdown, viewable later in the insights page and calendar
