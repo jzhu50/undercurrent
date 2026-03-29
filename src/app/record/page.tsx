@@ -282,13 +282,13 @@ export default function RecordPage() {
       <NavBar />
       <canvas ref={canvasRef} className="hidden" />
 
-      <div className="relative z-10 flex flex-col items-center gap-14">
+      <div className="relative z-10 flex flex-col items-center gap-14 fade-in">
         {/* Header */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
             {today}
           </p>
-          <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+          <p className="text-black text-[40px] leading-[48px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
             today, i feel...
           </p>
         </div>
@@ -343,10 +343,10 @@ export default function RecordPage() {
             >
               {segments.map((seg, i) => (
                 <div key={i} className="flex flex-col gap-1.5">
-                  <p className="text-black text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-black text-[14px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {seg.time}
                   </p>
-                  <p className="text-[#7f7f7f] text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-[#7f7f7f] text-[14px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {seg.text}
                   </p>
                 </div>
@@ -355,10 +355,10 @@ export default function RecordPage() {
               {/* Interim text (partial, still being spoken) */}
               {interimText && (
                 <div className="flex flex-col gap-1.5 opacity-50">
-                  <p className="text-black text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-black text-[14px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {formatElapsed(Date.now() - recStartRef.current)}
                   </p>
-                  <p className="text-[#7f7f7f] text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  <p className="text-[#7f7f7f] text-[14px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                     {interimText}
                   </p>
                 </div>
@@ -366,7 +366,7 @@ export default function RecordPage() {
 
               {/* Empty state before first words */}
               {segments.length === 0 && !interimText && (
-                <p className="text-zinc-300 text-[14px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                <p className="text-zinc-300 text-[12px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                   start speaking…
                 </p>
               )}

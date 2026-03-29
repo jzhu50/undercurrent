@@ -13,7 +13,7 @@ const FRIENDLY: Record<string, string> = {
 
 function GoogleLogo() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M29.44 16.32c0-1.01-.09-1.98-.25-2.91H16v5.51h7.54a6.44 6.44 0 0 1-2.79 4.23v3.52h4.52c2.64-2.43 4.17-6.01 4.17-10.35Z" fill="#4285F4"/>
       <path d="M16 30c3.78 0 6.95-1.25 9.27-3.39l-4.52-3.51c-1.25.84-2.85 1.34-4.75 1.34-3.65 0-6.74-2.46-7.84-5.77H3.49v3.62A14 14 0 0 0 16 30Z" fill="#34A853"/>
       <path d="M8.16 18.67A8.43 8.43 0 0 1 7.72 16c0-.93.16-1.83.44-2.67V9.71H3.49A14 14 0 0 0 2 16c0 2.26.54 4.4 1.49 6.29l4.67-3.62Z" fill="#FBBC05"/>
@@ -107,7 +107,7 @@ export default function SignUpPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[18px] font-normal transition hover:shadow-md disabled:opacity-50"
+                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[20px] font-normal transition hover:shadow-md disabled:opacity-50"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 {loading ? 'signing up…' : 'sign up'}
