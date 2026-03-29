@@ -27,7 +27,9 @@ export interface IEntry extends Document {
   contradictionDetected?: boolean        // True when signals disagreed past threshold
   contradictionMessage?: string          // e.g. 'Your words said calm. Your voice said fear.'
   emotionBeneath?: string                // Gemini's hidden driver insight
+  keywords?: string[]                    // 3 AI-summarized keywords for the entry
   gradientColors?: string[]              // Precomputed hex codes for the entry gradient
+  recordingCount?: number                // How many recordings have been merged into this entry
   createdAt: Date
   updatedAt: Date
 }
@@ -66,7 +68,9 @@ const EntrySchema = new Schema<IEntry>(
     contradictionDetected: { type: Boolean },
     contradictionMessage: { type: String },
     emotionBeneath: { type: String },
+    keywords: { type: [String] },
     gradientColors: { type: [String] },
+    recordingCount: { type: Number, default: 1 },
   },
   { timestamps: true }
 )

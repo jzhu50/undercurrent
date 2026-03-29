@@ -11,6 +11,7 @@
   "dependencies": {
     "@clerk/nextjs": "^7.0.7",
     "@elevenlabs/elevenlabs-js": "^2.40.0",
+    "@fontsource/eb-garamond": "^5.2.7",
     "@google/generative-ai": "^0.24.1",
     "@vercel/blob": "^2.3.2",
     "hume": "^0.15.15",

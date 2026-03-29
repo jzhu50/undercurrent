@@ -1,0 +1,257 @@
+'use client'
+
+import '@fontsource/eb-garamond'
+import { useEffect, useState } from 'react'
+import { useRouter, useParams } from 'next/navigation'
+import NavBar from '@/components/NavBar'
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface EntryData {
+  _id: string
+  createdAt: string
+  transcript?: string
+  emotionBeneath?: string
+  contradictionDetected?: boolean
+  contradictionMessage?: string
+  gradientColors?: string[]
+  fusedEmotions?: Record<string, number>
+  keywords?: string[]
+}
+
+// ── Gradient circle ───────────────────────────────────────────────────────────
+
+function GradientCircle({ colors }: { colors: string[] }) {
+  const [c1, c2, c3] = colors
+  const bg = c2
+    ? `linear-gradient(to bottom, ${c1} 0%, ${c2} 50%, ${c3 ?? c2} 100%)`
+    : c1 ?? '#e0e0e0'
+  return (
+    <div
+      className="w-32 h-32 rounded-full flex-shrink-0 shadow-[2px_2px_5px_rgba(0,0,0,0.25)]"
+      style={{ background: bg }}
+    />
+  )
+}
+
+// ── Transcript card ───────────────────────────────────────────────────────────
+
+function TranscriptCard({ transcript }: { transcript?: string }) {
+  if (!transcript) {
+    return (
+      <div className="flex-1 bg-white border border-[rgba(127,127,127,0.5)] rounded-3xl shadow-[2px_2px_5px_rgba(0,0,0,0.25)] px-7 py-12 overflow-y-auto" style={{ height: 526 }}>
+        <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+          no transcript available
+        </p>
+      </div>
+    )
+  }
+
+  // Split into rough ~30-word segments for display
+  const words = transcript.split(/\s+/)
+  const segmentSize = 30
+  const segments: string[] = []
+  for (let i = 0; i < words.length; i += segmentSize) {
+    segments.push(words.slice(i, i + segmentSize).join(' '))
+  }
+
+  return (
+    <div
+      className="flex-1 bg-white border border-[rgba(127,127,127,0.5)] rounded-3xl shadow-[2px_2px_5px_rgba(0,0,0,0.25)] px-7 py-12 overflow-y-auto flex flex-col gap-9"
+      style={{ height: 526, fontFamily: '"DM Mono", monospace' }}
+    >
+      {segments.map((seg, i) => (
+        <div key={i} className="flex flex-col gap-1.5">
+          <p className="text-black text-[18px]">
+            {`${Math.floor((i * segmentSize) / 150)}:${String(Math.round(((i * segmentSize) % 150) * 0.4)).padStart(2, '0')}`}
+          </p>
+          <p className="text-[#7f7f7f] text-[18px] italic">{seg}</p>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ── Emotion color helpers ─────────────────────────────────────────────────────
+
+const EMOTION_DEFAULTS: Record<string, string> = {
+  joy:      '#fde2e4',
+  sadness:  '#e2ece9',
+  anger:    '#dbcfbd',
+  surprise: '#fefae0',
+  disgust:  '#efcfe3',
+  fear:     '#add8e6',
+}
+
+function loadEmotionColors(): Record<string, string> {
+  if (typeof window === 'undefined') return {}
+  try { return JSON.parse(localStorage.getItem('undercurrent_emotion_colors') ?? '{}') } catch { return {} }
+}
+
+// ── Insights card ─────────────────────────────────────────────────────────────
+
+function InsightsCard({
+  emotionBeneath,
+  contradictionDetected,
+  contradictionMessage,
+  fusedEmotions,
+}: Pick<EntryData, 'emotionBeneath' | 'contradictionDetected' | 'contradictionMessage' | 'fusedEmotions'>) {
+  const saved = loadEmotionColors()
+  const topKey = fusedEmotions
+    ? Object.entries(fusedEmotions).sort(([, a], [, b]) => b - a)[0]?.[0]
+    : undefined
+  const accentColor = topKey ? (saved[topKey] ?? EMOTION_DEFAULTS[topKey] ?? '#a8abfc') : '#a8abfc'
+
+  return (
+    <div
+      className="flex-1 bg-white border border-[rgba(127,127,127,0.5)] rounded-3xl shadow-[2px_2px_5px_rgba(0,0,0,0.25)] px-7 py-12 overflow-y-auto flex flex-col gap-8"
+      style={{ height: 526 }}
+    >
+      {emotionBeneath ? (
+        <p className="text-black text-[28px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+          {emotionBeneath}
+        </p>
+      ) : (
+        <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+          no insights available
+        </p>
+      )}
+
+      {contradictionDetected && contradictionMessage && (
+        <p className="text-black text-[28px] leading-[40px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+          {contradictionMessage}
+        </p>
+      )}
+
+      {fusedEmotions && (
+        <div className="flex flex-col gap-3 mt-auto">
+          {Object.entries(fusedEmotions)
+            .sort(([, a], [, b]) => b - a)
+            .map(([k, v]) => {
+              const barColor = saved[k] ?? EMOTION_DEFAULTS[k] ?? '#63d7ba'
+              return (
+                <div key={k} className="flex flex-col gap-1">
+                  <div className="flex justify-between text-[16px] text-zinc-400" style={{ fontFamily: '"DM Mono", monospace' }}>
+                    <span>{k}</span><span>{v.toFixed(0)}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-zinc-100 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${v}%`, background: barColor }} />
+                  </div>
+                </div>
+              )
+            })}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
+
+export default function EntryInsightsPage() {
+  const router = useRouter()
+  const { id } = useParams<{ id: string }>()
+  const [entry, setEntry]     = useState<EntryData | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError]     = useState<string | null>(null)
+
+  useEffect(() => {
+    if (!id) return
+    setLoading(true)
+    fetch(`/api/entries/${id}`)
+      .then((r) => r.json())
+      .then(({ data, error: e }: { data?: EntryData; error?: string }) => {
+        if (e) { setError(e); return }
+        setEntry(data ?? null)
+      })
+      .catch(() => setError('Failed to load entry.'))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  const today = entry
+    ? new Date(entry.createdAt)
+        .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+        .toLowerCase()
+    : ''
+
+  const subtitle = entry?.keywords && entry.keywords.length > 0
+    ? entry.keywords.join('  ·  ')
+    : ''
+
+  return (
+    <main
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
+      style={{ backgroundImage: 'url(/paper-bg.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}
+    >
+      <div className="absolute inset-0 bg-white/75" />
+      <NavBar activeOverride="history" />
+
+      <div className="relative z-10 w-full max-w-[1035px] mx-auto px-8 py-16 flex flex-col gap-14">
+        {loading && (
+          <div className="flex items-center justify-center h-64">
+            <div className="w-8 h-8 border-2 border-[#63d7ba] border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="flex flex-col items-center gap-4 h-64 justify-center">
+            <p className="text-zinc-400 text-sm" style={{ fontFamily: '"DM Mono", monospace' }}>{error}</p>
+            <button
+              onClick={() => router.back()}
+              className="text-zinc-500 underline text-sm"
+              style={{ fontFamily: '"DM Mono", monospace' }}
+            >
+              go back
+            </button>
+          </div>
+        )}
+
+        {!loading && entry && (
+          <>
+            {/* Header row */}
+            <div className="flex items-start justify-between">
+              <div className="flex flex-col gap-7">
+                {/* Back link */}
+                <button
+                  onClick={() => router.back()}
+                  className="text-[#7f7f7f] text-[20px] text-left"
+                  style={{ fontFamily: '"DM Mono", monospace' }}
+                >
+                  {'← '}<span className="underline">BACK</span>
+                </button>
+
+                {/* Date + subtitle */}
+                <div className="flex flex-col gap-2">
+                  <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+                    {today}
+                  </p>
+                  {subtitle && (
+                    <p className="text-[#7f7f7f] text-[20px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                      {subtitle}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Gradient circle */}
+              {entry.gradientColors && entry.gradientColors.length > 0 && (
+                <GradientCircle colors={entry.gradientColors} />
+              )}
+            </div>
+
+            {/* Cards row */}
+            <div className="flex gap-9 items-start">
+              <TranscriptCard transcript={entry.transcript} />
+              <InsightsCard
+                emotionBeneath={entry.emotionBeneath}
+                contradictionDetected={entry.contradictionDetected}
+                contradictionMessage={entry.contradictionMessage}
+                fusedEmotions={entry.fusedEmotions}
+              />
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  )
+}

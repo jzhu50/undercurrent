@@ -193,6 +193,27 @@ async function getPresageEmotions(audio: Blob): Promise<PresageEmotions | null> 
   }
 }
 
+async function getKeywords(transcript: string): Promise<string[]> {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) return []
+
+  const genAI = new GoogleGenerativeAI(apiKey)
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+
+  const prompt = `Read this journal transcript and respond with exactly 3 lowercase keywords (single words or short phrases, no punctuation) that capture the core themes, separated by commas. Nothing else.
+
+Transcript:
+${transcript}`
+
+  const result = await model.generateContent(prompt)
+  return result.response
+    .text()
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+    .slice(0, 3)
+}
+
 async function getEmotionBeneath(
   transcript: string,
   fused: FusedEmotions,
@@ -273,12 +294,16 @@ export async function POST(request: NextRequest) {
   const fusedEmotions = fuseEmotions(gemini, humeVoice, humeFace, presage)
   const { detected, message } = detectContradiction(gemini, humeVoice, humeFace, presage)
 
-  const emotionBeneath = await getEmotionBeneath(transcript, fusedEmotions)
+  const [emotionBeneath, keywords] = await Promise.all([
+    getEmotionBeneath(transcript, fusedEmotions),
+    getKeywords(transcript),
+  ])
 
   return Response.json({
     fusedEmotions,
     contradictionDetected: detected,
     contradictionMessage: message,
     emotionBeneath,
+    keywords,
   })
 }
