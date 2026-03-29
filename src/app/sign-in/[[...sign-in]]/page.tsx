@@ -95,12 +95,6 @@ export default function SignInPage() {
           </p>
         </div>
 
-        {errorMsg && (
-          <p className="text-[#ff7480] text-[14px] text-center" style={{ fontFamily: '"DM Mono", monospace' }}>
-            {errorMsg}
-          </p>
-        )}
-
         {!isVerifying ? (
           <form onSubmit={(e) => { e.preventDefault(); handleSignIn(new FormData(e.currentTarget)) }} className="flex flex-col gap-10 w-full">
             {/* Username field */}
@@ -127,15 +121,21 @@ export default function SignInPage() {
               />
             </div>
 
-            <div className="flex flex-col gap-5 items-center">
+            <div className="flex flex-col gap-3 items-center">
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[27px] font-normal transition hover:shadow-md disabled:opacity-50"
+                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[27px] font-normal transition hover:shadow-md disabled:opacity-50"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 {loading ? 'logging in…' : 'login'}
               </button>
+
+              {errorMsg && (
+                <p className="text-[#ff7480] text-[14px] text-center" style={{ fontFamily: '"DM Mono", monospace' }}>
+                  {errorMsg}
+                </p>
+              )}
 
               {/* Divider */}
               <div className="flex items-center gap-3 w-full">
