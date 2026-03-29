@@ -4,7 +4,7 @@ import '@fontsource/eb-garamond'
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import NavBar from '@/components/NavBar'
-import { computeGradientColors, loadEmotionColors, EMOTION_DEFAULTS } from '@/lib/gradients'
+import { computeGradientColors, computeGradientStops, loadEmotionColors, EMOTION_DEFAULTS } from '@/lib/gradients'
 import type { FusedEmotions } from '@/lib/models/Entry'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -27,10 +27,12 @@ interface EntryData {
 
 // ── Gradient circle ───────────────────────────────────────────────────────────
 
-function GradientCircle({ colors }: { colors: string[] }) {
-  const [c1, c2, c3] = colors
+function GradientCircle({ colors, stops }: { colors: string[]; stops?: number[] }) {
+  const top3 = colors.slice(0, 3)
+  const [c1, c2, c3] = top3
+  const [s1, s2, s3] = stops ?? [0, 50, 100]
   const bg = c2
-    ? `linear-gradient(to bottom, ${c1} 0%, ${c2} 50%, ${c3 ?? c2} 100%)`
+    ? `linear-gradient(to bottom, ${c1} ${s1}%, ${c2} ${s2}%, ${c3 ?? c2} ${s3 ?? 100}%)`
     : c1 ?? '#e0e0e0'
   return (
     <div
@@ -261,10 +263,12 @@ export default function EntryInsightsPage() {
 
               {/* Gradient circle — computed from fusedEmotions using user's custom colors */}
               {(entry.fusedEmotions || entry.gradientColors) && (() => {
-                const colors = entry.fusedEmotions
-                  ? computeGradientColors(entry.fusedEmotions as unknown as FusedEmotions, userColors)
+                const fused  = entry.fusedEmotions as unknown as FusedEmotions | undefined
+                const colors = fused
+                  ? computeGradientColors(fused, userColors)
                   : entry.gradientColors!
-                return <GradientCircle colors={colors} />
+                const stops  = fused ? computeGradientStops(fused) : undefined
+                return <GradientCircle colors={colors} stops={stops} />
               })()}
             </div>
 
