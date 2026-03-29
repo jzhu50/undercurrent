@@ -29,15 +29,6 @@ export interface HumeFaceEmotions {
   surprise: number
 }
 
-export interface PresageEmotions {
-  joy: number
-  anger: number
-  fear: number
-  sadness: number
-  disgust: number
-  surprise: number
-}
-
 // ── Contradiction result ──────────────────────────────────────────────────────
 
 export interface ContradictionResult {
@@ -98,10 +89,9 @@ function dominantEmotion(e: GeminiEmotions): EmotionKey {
 // ── Main exports ──────────────────────────────────────────────────────────────
 
 /**
- * Blends 4 signals into a single FusedEmotions object.
+ * Blends 3 signals into a single FusedEmotions object.
  *
- * Weights with presage:    Gemini 55%, HumeVoice 25%, HumeFace 10%, Presage 10%
- * Weights without presage: Gemini 61%, HumeVoice 28%, HumeFace 11%
+ * Weights: Gemini 61%, HumeVoice 28%, HumeFace 11%
  *
  * Returns values rounded to 1 decimal that sum to 100.
  */
@@ -109,23 +99,16 @@ export function fuseEmotions(
   gemini: GeminiEmotions,
   humeVoice: HumeVoiceEmotions,
   humeFace: HumeFaceEmotions,
-  presage: PresageEmotions | null,
 ): FusedEmotions {
-  const weights =
-    presage !== null
-      ? { gemini: 0.55, humeVoice: 0.25, humeFace: 0.10, presage: 0.10 }
-      : { gemini: 0.61, humeVoice: 0.28, humeFace: 0.11, presage: 0.00 }
+  const weights = { gemini: 0.61, humeVoice: 0.28, humeFace: 0.11 }
 
   const blended = {} as Record<EmotionKey, number>
 
   for (const k of EMOTION_KEYS) {
-    const value =
-      gemini[k]     * weights.gemini    +
-      humeVoice[k]  * weights.humeVoice +
-      humeFace[k]   * weights.humeFace  +
-      (presage ? presage[k] * weights.presage : 0)
-
-    blended[k] = value
+    blended[k] =
+      gemini[k]    * weights.gemini    +
+      humeVoice[k] * weights.humeVoice +
+      humeFace[k]  * weights.humeFace
   }
 
   return normalizeToHundred(blended as GeminiEmotions)
@@ -145,17 +128,12 @@ export function detectContradiction(
   gemini: GeminiEmotions,
   humeVoice: HumeVoiceEmotions,
   humeFace: HumeFaceEmotions,
-  presage: PresageEmotions | null,
 ): ContradictionResult {
   const geminiTop    = dominantEmotion(gemini)
   const humeVoiceTop = dominantEmotion(humeVoice)
   const humeFaceTop  = dominantEmotion(humeFace)
 
-  const tops = presage !== null
-    ? [geminiTop, humeVoiceTop, humeFaceTop, dominantEmotion(presage)]
-    : [geminiTop, humeVoiceTop, humeFaceTop]
-
-  const uniqueTops = new Set(tops)
+  const uniqueTops = new Set([geminiTop, humeVoiceTop, humeFaceTop])
   const detected = uniqueTops.size >= 2
 
   const message = detected

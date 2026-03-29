@@ -9,7 +9,6 @@ import {
   type GeminiEmotions,
   type HumeVoiceEmotions,
   type HumeFaceEmotions,
-  type PresageEmotions,
 } from '@/lib/fusion'
 import type { FusedEmotions } from '@/lib/models/Entry'
 
@@ -150,48 +149,6 @@ async function getHumeFaceEmotions(
   return mapHumeScores(emotions)
 }
 
-/**
- * Presage REST integration — wraps in try/catch per spec so any failure
- * returns null rather than aborting the whole pipeline.
- *
- * Expected env vars: PRESAGE_API_URL, PRESAGE_API_KEY
- * Expected response: { joy, anger, fear, sadness, disgust, surprise } 0–100
- */
-async function getPresageEmotions(audio: Blob): Promise<PresageEmotions | null> {
-  const url = process.env.PRESAGE_API_URL
-  const key = process.env.PRESAGE_API_KEY
-  if (!url || !key) return null
-
-  try {
-    const body = new FormData()
-    body.append('audio', audio, 'recording.webm')
-
-    const res = await fetch(`${url}/v1/analyze`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}` },
-      body,
-    })
-
-    if (!res.ok) {
-      console.warn(`Presage returned ${res.status} — skipping signal`)
-      return null
-    }
-
-    const data = (await res.json()) as Record<string, unknown>
-
-    return {
-      joy:      Number(data.joy      ?? 0),
-      anger:    Number(data.anger    ?? 0),
-      fear:     Number(data.fear     ?? 0),
-      sadness:  Number(data.sadness  ?? 0),
-      disgust:  Number(data.disgust  ?? 0),
-      surprise: Number(data.surprise ?? 0),
-    }
-  } catch (err) {
-    console.warn('Presage signal failed gracefully:', err)
-    return null
-  }
-}
 
 async function getKeywords(transcript: string): Promise<string[]> {
   const apiKey = process.env.GEMINI_API_KEY
@@ -265,13 +222,12 @@ export async function POST(request: NextRequest) {
 
   const frameBlob = videoFrame instanceof Blob ? videoFrame : null
 
-  // Run all 4 signals in parallel — one failure must not crash the pipeline
-  const [geminiResult, humeVoiceResult, humeFaceResult, presageResult] =
+  // Run all 3 signals in parallel — one failure must not crash the pipeline
+  const [geminiResult, humeVoiceResult, humeFaceResult] =
     await Promise.allSettled([
       getGeminiEmotions(transcript),
       getHumeVoiceEmotions(audio),
       getHumeFaceEmotions(frameBlob),
-      getPresageEmotions(audio),
     ])
 
   if (geminiResult.status === 'rejected') {
@@ -289,10 +245,9 @@ export async function POST(request: NextRequest) {
   // humeFace is null when no frame was provided OR when the signal failed
   const humeFaceRaw = humeFaceResult.status === 'fulfilled' ? humeFaceResult.value : null
   const humeFace    = humeFaceRaw ?? NEUTRAL_EMOTIONS
-  const presage   = presageResult.status   === 'fulfilled' ? presageResult.value   : null
 
-  const fusedEmotions = fuseEmotions(gemini, humeVoice, humeFace, presage)
-  const { detected, message } = detectContradiction(gemini, humeVoice, humeFace, presage)
+  const fusedEmotions = fuseEmotions(gemini, humeVoice, humeFace)
+  const { detected, message } = detectContradiction(gemini, humeVoice, humeFace)
 
   const [emotionBeneath, keywords] = await Promise.all([
     getEmotionBeneath(transcript, fusedEmotions),

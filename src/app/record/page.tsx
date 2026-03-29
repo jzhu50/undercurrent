@@ -4,7 +4,7 @@ import '@fontsource/eb-garamond'
 import { useRef, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import NavBar from '@/components/NavBar'
-import { setRecordingResult } from '@/lib/recordingStore'
+import { startRecordingSession, setRecordingResult } from '@/lib/recordingStore'
 import { computeGradientColors } from '@/lib/gradients'
 import type { FusedEmotions } from '@/lib/models/Entry'
 
@@ -179,18 +179,26 @@ export default function RecordPage() {
       frameBlob = await new Promise<Blob | null>((res) => c.toBlob(res, 'image/jpeg', 0.85))
     }
 
-    mediaRef.current?.stop()
-    streamRef.current?.getTracks().forEach((t) => t.stop())
-
-    // Mark store as processing and navigate right away
-    setRecordingResult({ status: 'processing' })
+    // Start a new session — any in-flight pipeline from a previous recording
+    // will see a stale session ID and silently discard its store writes.
+    const sessionId = startRecordingSession()
     router.push('/results')
 
-    // Wait for MediaRecorder onstop to fire and populate videoBlobRef
-    await new Promise((res) => setTimeout(res, 300))
-    const videoBlob = videoBlobRef.current
+    // Properly await onstop rather than hoping 300ms is enough.
+    // We listen *before* calling stop so we never miss the event.
+    const videoBlob = await new Promise<Blob | null>((resolve) => {
+      const mr = mediaRef.current
+      if (!mr) { resolve(null); return }
+      mr.addEventListener('stop', () => {
+        resolve(new Blob(chunksRef.current, { type: 'video/webm' }))
+      }, { once: true })
+      mr.stop()
+    })
+
+    streamRef.current?.getTracks().forEach((t) => t.stop())
+
     if (!videoBlob) {
-      setRecordingResult({ status: 'error', error: 'Recording failed.' })
+      setRecordingResult({ status: 'error', error: 'Recording failed.' }, sessionId)
       return
     }
 
@@ -222,7 +230,7 @@ export default function RecordPage() {
         emotionBeneath:        analyzed.emotionBeneath,
         contradictionDetected: analyzed.contradictionDetected,
         contradictionMessage:  analyzed.contradictionMessage,
-      })
+      }, sessionId)
 
       // 3. Upload video + save entry; capture entryId once persisted
       const uploadUrl = await fetch('/api/upload', {
@@ -257,11 +265,11 @@ export default function RecordPage() {
                contradictionDetected: analyzed.contradictionDetected,
                contradictionMessage:  analyzed.contradictionMessage },
           entryId: String(saved.data._id),
-        })
+        }, sessionId)
       }
     } catch (err) {
       console.error(err)
-      setRecordingResult({ status: 'error', error: 'Something went wrong. Please try again.' })
+      setRecordingResult({ status: 'error', error: 'Something went wrong. Please try again.' }, sessionId)
     }
   }
 

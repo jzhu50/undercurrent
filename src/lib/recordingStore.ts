@@ -15,13 +15,31 @@ export interface RecordingResult {
 }
 
 let _state: RecordingResult = { status: 'processing' }
+let _sessionId = 0
 const _listeners = new Set<() => void>()
 
 export function getRecordingResult(): RecordingResult {
   return _state
 }
 
-export function setRecordingResult(next: RecordingResult): void {
+/**
+ * Increments the session counter and resets the store to 'processing'.
+ * Returns the new session ID — the caller must pass it to setRecordingResult
+ * so stale pipeline writes from a previous session are silently dropped.
+ */
+export function startRecordingSession(): number {
+  _sessionId += 1
+  _state = { status: 'processing' }
+  _listeners.forEach((fn) => fn())
+  return _sessionId
+}
+
+/**
+ * Only writes to the store if `sessionId` matches the current session.
+ * Pass the value returned by `startRecordingSession()`.
+ */
+export function setRecordingResult(next: RecordingResult, sessionId: number): void {
+  if (sessionId !== _sessionId) return   // stale pipeline — discard
   _state = next
   _listeners.forEach((fn) => fn())
 }

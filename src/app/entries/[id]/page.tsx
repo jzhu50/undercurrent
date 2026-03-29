@@ -15,6 +15,7 @@ interface EntryData {
   contradictionDetected?: boolean
   contradictionMessage?: string
   gradientColors?: string[]
+  latestEmotions?: Record<string, number>
   fusedEmotions?: Record<string, number>
   geminiEmotions?: Record<string, number>
   humeVoiceEmotions?: Record<string, number>
@@ -105,11 +106,12 @@ function InsightsCard({
   emotionBeneath,
   contradictionDetected,
   contradictionMessage,
+  latestEmotions,
   fusedEmotions,
   geminiEmotions,
   humeVoiceEmotions,
   humeFaceEmotions,
-}: Pick<EntryData, 'emotionBeneath' | 'contradictionDetected' | 'contradictionMessage' | 'fusedEmotions' | 'geminiEmotions' | 'humeVoiceEmotions' | 'humeFaceEmotions'>) {
+}: Pick<EntryData, 'emotionBeneath' | 'contradictionDetected' | 'contradictionMessage' | 'latestEmotions' | 'fusedEmotions' | 'geminiEmotions' | 'humeVoiceEmotions' | 'humeFaceEmotions'>) {
   const saved = loadEmotionColors()
   const topKey = fusedEmotions
     ? Object.entries(fusedEmotions).sort(([, a], [, b]) => b - a)[0]?.[0]
@@ -159,9 +161,9 @@ function InsightsCard({
         </div>
       )}
 
-      {fusedEmotions && (
+      {(latestEmotions ?? fusedEmotions) && (
         <div className="flex flex-col gap-3 mt-auto">
-          {Object.entries(fusedEmotions)
+          {Object.entries(latestEmotions ?? fusedEmotions!)
             .sort(([, a], [, b]) => b - a)
             .map(([k, v]) => {
               const barColor = saved[k] ?? EMOTION_DEFAULTS[k] ?? '#63d7ba'
@@ -282,6 +284,7 @@ export default function EntryInsightsPage() {
                 emotionBeneath={entry.emotionBeneath}
                 contradictionDetected={entry.contradictionDetected}
                 contradictionMessage={entry.contradictionMessage}
+                latestEmotions={entry.latestEmotions}
                 fusedEmotions={entry.fusedEmotions}
                 geminiEmotions={entry.geminiEmotions}
                 humeVoiceEmotions={entry.humeVoiceEmotions}
