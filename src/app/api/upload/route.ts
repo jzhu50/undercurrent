@@ -20,12 +20,13 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: 'Missing required field: audio (blob)' }, { status: 400 })
   }
 
-  const ext = audio.type.includes('mp4') ? 'mp4' : 'webm'
+  const type = audio.type || 'video/webm'
+  const ext = type.includes('mp4') ? 'mp4' : 'webm'
   const filename = `recordings/${userId}/${Date.now()}.${ext}`
 
   const blob = await put(filename, audio, {
-    access: 'public',
-    contentType: audio.type || 'audio/webm',
+    access: 'private',
+    contentType: type,
   })
 
   return Response.json({ url: blob.url }, { status: 201 })

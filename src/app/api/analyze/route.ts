@@ -78,7 +78,7 @@ async function getGeminiEmotions(transcript: string): Promise<GeminiEmotions> {
   if (!apiKey) throw new Error('Missing env: GEMINI_API_KEY')
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const prompt = `Analyze the emotional content of the following journal entry transcript.
 Return ONLY a valid JSON object with exactly these 6 keys: joy, anger, fear, sadness, disgust, surprise.
@@ -205,7 +205,7 @@ async function getEmotionBeneath(
   )
 
   const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const prompt = `You are a compassionate emotional insight guide. Based on this journal entry and its dominant emotional signal (${dominantKey}), write 1–2 plain sentences that gently name what might be driving the emotion beneath the surface. Use simple, direct language — no jargon, no clinical terms, no labels. Write as if speaking to a trusted friend.
 

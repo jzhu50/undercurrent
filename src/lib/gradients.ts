@@ -40,10 +40,9 @@ export function computeGradientColors(emotions: FusedEmotions): string[] {
 
   return top.map(({ key, score }) => {
     const hue = EMOTION_HUES[key]
-    // Map score 0–100 → saturation 25–70%, lightness 60–85%
-    // Higher score = more vivid and slightly darker
-    const saturation = 25 + (score / 100) * 45
-    const lightness  = 85 - (score / 100) * 25
+    // Map score 0–100 → saturation 50–75%, lightness 72–80%
+    const saturation = 50 + (score / 100) * 25
+    const lightness  = 80 - (score / 100) * 8
     return hslToHex(hue, saturation, lightness)
   })
 }
