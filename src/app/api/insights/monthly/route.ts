@@ -60,9 +60,25 @@ export async function GET(request: NextRequest) {
 
   const monthName = start.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 
-  const prompt = `You are a warm, reflective journaling companion. Based on the following emotional snapshot of someone's ${monthName}, write a single paragraph of 2–3 sentences that captures the emotional arc of their month. Be specific, compassionate, and observational — name the feelings and themes you see. Do not give advice. Write in second person ("you"). Do not use the word "journey." Under 30 words total.
+  const prompt = `
+You are an emotional analytics system. Based on the emotional data from ${monthName}, generate a concise 2–3 sentence summary that captures the overall trend and progression of emotions across the month so far.
+
+Prioritize:
+- how emotions change over time (early, mid, and recent entries)
+- overall direction (increasing, decreasing, stable, or fluctuating)
+- dominant emotions and their relative intensity
+- any consistent mismatches between expressed (language) and inferred (voice, facial, biometric) signals
+
+Structure the output as:
+1) overall trend across the month (or month so far)
+2) supporting signal-based observation
+
+Be insight-driven, with just a little bit of reflection. Do not give advice. Write in second person ("you"). Keep it under 50 words.
+
+Avoid vague language. Use specific temporal references (e.g., "early in the month", "in recent entries", "so far").
 
 ${emotionLines}`
+
 
   const genAI = new GoogleGenerativeAI(apiKey)
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })

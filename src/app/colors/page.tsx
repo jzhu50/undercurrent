@@ -97,6 +97,13 @@ export default function ColorsPage() {
     return colors[mood.key] ?? mood.default
   }
 
+  const hasCustomColors = MOODS.some((mood) => colors[mood.key] !== undefined)
+
+  function resetColors() {
+    localStorage.removeItem(STORAGE_KEY)
+    setColors({})
+  }
+
   return (
     <main
       className="relative flex min-h-screen items-center justify-center overflow-hidden"
@@ -127,6 +134,17 @@ export default function ColorsPage() {
             />
           ))}
         </div>
+
+        {/* Reset button — only shown when colors have been customized */}
+        {hasCustomColors && (
+          <button
+            onClick={resetColors}
+            className="text-[#7f7f7f] text-[16px] underline underline-offset-4 hover:text-black transition-colors"
+            style={{ fontFamily: '"DM Mono", monospace' }}
+          >
+            reset to defaults
+          </button>
+        )}
       </div>
     </main>
   )
