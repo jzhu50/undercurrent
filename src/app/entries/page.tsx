@@ -27,6 +27,7 @@ function GradientCircle({ colors, stops, size = 'md' }: { colors: string[]; stop
     ? `linear-gradient(to bottom, ${c1} ${s1}%, ${c2} ${s2}%, ${c3 ?? c2} ${s3 ?? 100}%)`
     : c1 ?? '#e0e0e0'
   const dim = size === 'sm' ? 'w-[54px] h-[54px]' : 'h-full aspect-square'
+
   return (
     <div
       className={`${dim} rounded-full flex-shrink-0 shadow-[2px_2px_5px_rgba(0,0,0,0.25)]`}
@@ -42,9 +43,10 @@ function EntryCard({ entry, userColors }: { entry: EntryData; userColors: Record
     .toLocaleDateString('en-US', { month: 'long', day: 'numeric' })
     .toLowerCase()
 
-  const subtitle = entry.keywords && entry.keywords.length > 0
-    ? entry.keywords.join('  ·  ')
-    : ''
+  const subtitle =
+    entry.keywords && entry.keywords.length > 0
+      ? entry.keywords.join('  ·  ')
+      : ''
 
   const fused  = entry.fusedEmotions as unknown as FusedEmotions | undefined
   const colors = fused
@@ -64,12 +66,14 @@ function EntryCard({ entry, userColors }: { entry: EntryData; userColors: Record
           <div className="h-full aspect-square rounded-full bg-zinc-100 shadow-[2px_2px_5px_rgba(0,0,0,0.25)]" />
         )}
       </div>
+
       <div className="flex flex-col gap-3.5 min-w-0">
         <p className="text-black text-[32px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {date}
         </p>
+
         {subtitle && (
-          <p className="text-[#7f7f7f] text-[16px] italic truncate" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[14px] italic truncate" style={{ fontFamily: '"DM Mono", monospace' }}>
             {subtitle}
           </p>
         )}
@@ -95,7 +99,7 @@ function mergedGradient(dayEntries: EntryData[], userColors: Record<string, stri
   return computeGradientColors(averaged, userColors)
 }
 
-// ── Calendar ──────────────────────────────────────────────────────────────────
+// ── Calendar ─────────────────────────────────────────────────────────────────
 
 function Calendar({
   entries,
@@ -146,9 +150,11 @@ function Calendar({
         >
           ‹
         </button>
+
         <p className="text-black text-[28px] leading-[36px] min-w-[220px] text-center" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
           {monthLabel}
         </p>
+
         <button
           onClick={onNext}
           className="text-[#7f7f7f] text-[32px] leading-none hover:text-black transition-colors px-1"
@@ -168,9 +174,11 @@ function Calendar({
         {cells.map((day, i) => {
           if (day === null) return <div key={i} className="w-[54px] h-[54px]" />
           const dayEntries = entriesByDay.get(day)
+
           if (dayEntries && dayEntries.length > 0) {
             const colors = mergedGradient(dayEntries, userColors)
             const href = `/entries/${dayEntries[0]._id}`
+
             return colors ? (
               <Link key={i} href={href}><GradientCircle colors={colors} size="sm" /></Link>
             ) : (
@@ -304,11 +312,12 @@ export default function HistoryPage() {
           <div className="flex gap-15 items-start">
             {/* Left column — recents */}
             <div className="flex flex-col gap-6 w-[496px] flex-shrink-0">
-              <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+              <p className="text-[#7f7f7f] text-[18px]" style={{ fontFamily: '"DM Mono", monospace' }}>
                 RECENTS
               </p>
+
               {recents.length === 0 ? (
-                <p className="text-zinc-300 text-[18px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
+                <p className="text-zinc-300 text-[16px] italic" style={{ fontFamily: '"DM Mono", monospace' }}>
                   no entries yet
                 </p>
               ) : (

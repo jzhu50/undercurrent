@@ -70,7 +70,7 @@ function ColorCard({
         tabIndex={-1}
       />
 
-      <p className="text-black text-[20px] text-center w-full" style={{ fontFamily: '"DM Mono", monospace' }}>
+      <p className="text-black text-[16px] text-center w-full" style={{ fontFamily: '"DM Mono", monospace' }}>
         {mood.label}
       </p>
     </div>
@@ -112,13 +112,13 @@ export default function ColorsPage() {
       <div className="absolute inset-0 bg-white/75" />
       <NavBar />
 
-      <div className="relative z-10 flex flex-col items-center gap-14">
+      <div className="relative z-10 flex flex-col items-center gap-14 fade-in">
         {/* Header */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-black text-[48px] leading-[60px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
+          <p className="text-black text-[40px] leading-[48px]" style={{ fontFamily: '"EB Garamond", Garamond, serif' }}>
             my colors
           </p>
-          <p className="text-[#7f7f7f] text-[20px]" style={{ fontFamily: '"DM Mono", monospace' }}>
+          <p className="text-[#7f7f7f] text-[16px]" style={{ fontFamily: '"DM Mono", monospace' }}>
             click a mood to edit its color
           </p>
         </div>

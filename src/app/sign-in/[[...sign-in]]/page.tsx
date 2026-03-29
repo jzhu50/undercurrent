@@ -14,7 +14,7 @@ const FRIENDLY: Record<string, string> = {
 
 function GoogleLogo() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M29.44 16.32c0-1.01-.09-1.98-.25-2.91H16v5.51h7.54a6.44 6.44 0 0 1-2.79 4.23v3.52h4.52c2.64-2.43 4.17-6.01 4.17-10.35Z" fill="#4285F4"/>
       <path d="M16 30c3.78 0 6.95-1.25 9.27-3.39l-4.52-3.51c-1.25.84-2.85 1.34-4.75 1.34-3.65 0-6.74-2.46-7.84-5.77H3.49v3.62A14 14 0 0 0 16 30Z" fill="#34A853"/>
       <path d="M8.16 18.67A8.43 8.43 0 0 1 7.72 16c0-.93.16-1.83.44-2.67V9.71H3.49A14 14 0 0 0 2 16c0 2.26.54 4.4 1.49 6.29l4.67-3.62Z" fill="#FBBC05"/>
@@ -87,10 +87,10 @@ export default function SignInPage() {
       <div className="relative z-10 flex flex-col items-center gap-16 w-[360px] px-4">
         {/* Branding */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 style={{ fontFamily: '"EB Garamond", Garamond, serif', fontSize: 60, lineHeight: 1 }} className="text-black font-normal">
+          <h1 style={{ fontFamily: '"EB Garamond", Garamond, serif', fontSize: 48 }} className="text-black font-normal leading-[60px]">
             undercurrent
           </h1>
-          <p style={{ fontFamily: '"DM Mono", monospace', fontSize: 20 }} className="text-[#a8abfc] italic">
+          <p style={{ fontFamily: '"DM Mono", monospace', fontSize: 14 }} className="text-[#a8abfc] italic">
             record your unseen emotions.
           </p>
         </div>
@@ -104,7 +104,7 @@ export default function SignInPage() {
                 type="email"
                 placeholder="EMAIL"
                 required
-                className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[14px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
                 style={{ fontFamily: '"DM Mono", monospace' }}
               />
             </div>
@@ -116,7 +116,7 @@ export default function SignInPage() {
                 type="password"
                 placeholder="PASSWORD"
                 required
-                className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+                className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[14px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
                 style={{ fontFamily: '"DM Mono", monospace' }}
               />
             </div>
@@ -125,7 +125,7 @@ export default function SignInPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[27px] font-normal transition hover:shadow-md disabled:opacity-50"
+                className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[20px] font-normal transition hover:shadow-md disabled:opacity-50"
                 style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
               >
                 {loading ? 'logging in…' : 'login'}
@@ -162,7 +162,7 @@ export default function SignInPage() {
 
                 <div id="clerk-captcha" />
 
-              <div className="flex gap-4 items-center text-[20px] whitespace-nowrap justify-center w-full" style={{ fontFamily: '"DM Mono", monospace' }}>
+              <div className="flex gap-4 items-center text-[14px] whitespace-nowrap justify-center w-full" style={{ fontFamily: '"DM Mono", monospace' }}>
                 <span className="text-[#7f7f7f]">don't have an account?</span>
                 <a href="/sign-up" className="text-black underline">sign up</a>
               </div>
@@ -178,7 +178,7 @@ export default function SignInPage() {
               type="text"
               placeholder="VERIFICATION CODE"
               required
-              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[20px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
+              className="bg-transparent border-0 border-b border-zinc-300 pb-1 text-[18px] text-zinc-400 placeholder-[#b8b8b8] outline-none focus:border-zinc-500 w-full"
               style={{ fontFamily: '"DM Mono", monospace' }}
             />
             {errorMsg && (
@@ -187,7 +187,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3.5 shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[32px] font-normal transition hover:shadow-md disabled:opacity-50"
+              className="w-full bg-white border border-[rgba(127,127,127,0.5)] rounded-full py-3 flex items-center justify-center shadow-[2px_2px_5px_rgba(0,0,0,0.25)] text-black text-[18px] font-normal transition hover:shadow-md disabled:opacity-50"
               style={{ fontFamily: '"EB Garamond", Garamond, serif' }}
             >
               {loading ? 'verifying…' : 'verify'}
