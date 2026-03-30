@@ -88,7 +88,8 @@ function topEmotion(emotions?: Record<string, number>): string | null {
   return sorted[0]?.[0] ?? null
 }
 
-// ── Insights card ─────────────────────────────────────────────────────────────
+// ── Insights card ─────────
+// ────────────────────────────────────────────────────
 
 function InsightsCard({
   emotionBeneath,
